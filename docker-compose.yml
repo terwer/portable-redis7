@@ -1,0 +1,69 @@
+# docker-compose --log-level INFO up --build docker-centos-vnc
+# docker-compose --log-level INFO up
+
+version: '3'
+services:
+  centos-7-vnc:
+    image: terwer/centos7:7
+    container_name: centos-7-vnc
+    build:
+      context: ./centos-7-vnc
+      dockerfile: Dockerfile
+    ports:
+      - "5901:5901"
+      - "3000:3000"
+      - "3001:3001"
+      - "8080:8080"
+      - "8081:8081"
+      - "8090:8090"
+      - "8091:8091"
+      - "9090:9090"
+    volumes:
+      - ./centos-7-vnc/sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./centos-7-vnc/mytemp:/mytemp
+      - ./centos-7-vnc/config:/config
+      - ./centos-7-vnc/env:/env
+      - ./centos-7-vnc/app:/app
+      - ./centos-7-vnc/scripts:/scripts
+      - ./centos-7-vnc/workspace:/workspace
+    privileged: true
+    tty: true
+    stdin_open: true
+  portable-mysql57-centos7:
+    stdin_open: true
+    tty: true
+    image: terwer/mysql57-centos7:5.7.38
+    container_name: portable-mysql57-centos7
+    build:
+     context: ./portable-mysql57-centos7
+     dockerfile: Dockerfile
+    ports:
+     - "3306:3306"
+    environment:
+     # 最好使用此设定时区，其它镜像也可以使用，也可以用"TZ=Asia/Shanghai"
+     - "TZ=CST-8"
+     - "MYSQL_ROOT_PASSWORD=123456"
+     - "MYSQL_ROOT_HOST=%"
+     - "MYSQL_DATABASE=test"
+     - "MYSQL_USER=terwer"
+     - "MYSQL_PASSWORD=123456"
+    volumes:
+     - ./portable-mysql57-centos7/data:/var/lib/mysql
+     - ./portable-mysql57-centos7/init:/docker-entrypoint-initdb.d/
+     - ./portable-mysql57-centos7/sql:/opt/
+     - ./portable-mysql57-centos7/mylog:/mylog/
+    restart: "no"
+  portable-redis7:
+    image: terwer/redis7-centos7:7.0.0
+    container_name: portable-redis7-centos7
+    build:
+     context: ./portable-redis7-centos7
+     dockerfile: Dockerfile
+    ports:
+     - "6379:6379"
+    environment:
+     # 最好使用此设定时区，其它镜像也可以使用，也可以用"TZ=Asia/Shanghai"
+     - "TZ=CST-8"
+    stdin_open: true
+    tty: true
+    restart: "no"    
