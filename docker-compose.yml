@@ -1,4 +1,4 @@
-# docker-compose --log-level INFO up --build docker-centos-vnc
+# docker-compose --log-level INFO up --build portable-redis7
 # docker-compose --log-level INFO up
 
 version: '3'
@@ -9,11 +9,20 @@ services:
     build:
      context: .
      dockerfile: Dockerfile
+    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes --requirepass 123456
     ports:
      - "6379:6379"
     environment:
-     # 最好使用此设定时区，其它镜像也可以使用，也可以用"TZ=Asia/Shanghai"
-     - "TZ=CST-8"
+     - "TZ=Asia/Shanghai"
+    volumes:
+      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data:/data
     stdin_open: true
     tty: true
-    restart: "no"    
+    restart: "no"
+    networks:
+      - local-dev
+
+networks:
+  local-dev:
+    external: true
