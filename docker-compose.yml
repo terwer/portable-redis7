@@ -1,5 +1,5 @@
-# docker-compose --log-level INFO up --build portable-redis7
-# docker-compose --log-level INFO up
+# docker-compose up --build
+# docker-compose up
 
 version: '3'
 services:
