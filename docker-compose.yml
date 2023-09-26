@@ -20,9 +20,8 @@ services:
     stdin_open: true
     tty: true
     restart: "no"
-    networks:
-      - local-dev
-
-networks:
-  local-dev:
-    external: true
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
